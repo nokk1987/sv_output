@@ -1,0 +1,56 @@
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+*.mexa64
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# Debug files
+*.dSYM/
+
+#Visual Studio files
+*.asv
+*.sdf
+*.suo
+*.ipch
+*.pdb
+
+#Others
+*.mat
+*.log
+*.tlog
+*.lastbuildstate
+*.cache
+*.tlog
+*.idb
+*.opensdf
+*.mexw32
+*.slx
+*.slx.autosave
+*.cproject
+*.project
+**/afllib.log
