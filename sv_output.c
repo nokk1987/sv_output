@@ -22,6 +22,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "simstruc.h"
+//#include "sv_publisher.h"
 
 FILE *fp;
 
@@ -81,6 +82,11 @@ static void mdlInitializeSizes(SimStruct *S)
 
     if (!ssSetNumOutputPorts(S, 0)) return;
     //ssSetOutputPortWidth(S, 0, DYNAMICALLY_SIZED);
+
+//    ssSetNumSFcnParams(S, 3);
+
+//    ssSetSFcnParamNotTunable(S,1);
+//    ssSetSFcnParamNotTunable(S,2);
 
     ssSetNumSampleTimes(S, 1);
     //ssSetNumRWork(S, 0);
