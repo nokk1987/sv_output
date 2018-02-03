@@ -61,7 +61,7 @@ FILE *fp;
  */
 static void mdlInitializeSizes(SimStruct *S)
 {
-    ssSetNumSFcnParams(S, 0);  /* Number of expected parameters */
+    ssSetNumSFcnParams(S, 1);  /* Number of expected parameters */
     if (ssGetNumSFcnParams(S) != ssGetSFcnParamsCount(S)) {
         /* Return if number of expected != number of actual parameters */
         return;
@@ -82,8 +82,6 @@ static void mdlInitializeSizes(SimStruct *S)
 
     if (!ssSetNumOutputPorts(S, 0)) return;
     //ssSetOutputPortWidth(S, 0, DYNAMICALLY_SIZED);
-
-//    ssSetNumSFcnParams(S, 3);
 
 //    ssSetSFcnParamNotTunable(S,1);
 //    ssSetSFcnParamNotTunable(S,2);
@@ -165,13 +163,19 @@ static void mdlInitializeSampleTimes(SimStruct *S)
  */
 static void mdlOutputs(SimStruct *S, int_T tid)
 {
+	size_t nu;
     const real_T *u = (const real_T *) ssGetInputPortSignal(S,0);
     int_T width = ssGetInputPortWidth(S,0);
     char text_output[TEXT_SIZE];
+    char interface[TEXT_SIZE];
+
 //    char *text_stub = "Ponyo!!";
+    nu = mxGetNumberOfElements(ssGetSFcnParam(S, 0));
+    mxGetString(ssGetSFcnParam(S, 0), interface, nu+1);
     
     sprintf(text_output, "%f\n",(float) u[0]);
     fprintf (fp, "%s", text_output);
+    fprintf (fp, "%s", interface);
 }
 
 
