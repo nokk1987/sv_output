@@ -13,6 +13,7 @@
 #define S_FUNCTION_NAME  sv_output
 #define S_FUNCTION_LEVEL 2
 #define TEXT_SIZE 100
+#define SV_LE_SAMPLE_TIME 0.00025
 
 /*
  * Need to include simstruc.h for the definition of the SimStruct and
@@ -24,9 +25,13 @@
 #include "simstruc.h"
 #include "sv_publisher.h"
 
-FILE *fp;
-char interface[TEXT_SIZE];
+/* Globals - at least for early development */
 
+FILE *fp;
+SampledValuesPublisher svPublisher;
+SV_ASDU asdu1;
+int float1;
+char interface[TEXT_SIZE];
 
 /* Error handling
  * --------------
@@ -105,10 +110,18 @@ static void mdlInitializeSizes(SimStruct *S)
         /* Error handling stub */
     }
 
+
+    /* SV publisher initialization */
     nu = mxGetNumberOfElements(ssGetSFcnParam(S, 0));
     mxGetString(ssGetSFcnParam(S, 0), interface, nu+1);
 
-    SampledValuesPublisher svPublisher = SampledValuesPublisher_create(NULL, interface);
+    svPublisher = SampledValuesPublisher_create(NULL, interface);
+
+    asdu1 = SampledValuesPublisher_addASDU(svPublisher, "svpub1", NULL, 1);
+
+    float1 = SV_ASDU_addFLOAT(asdu1);
+
+    SampledValuesPublisher_setupComplete(svPublisher);
 
 }   
 
@@ -122,7 +135,9 @@ static void mdlInitializeSizes(SimStruct *S)
  */
 static void mdlInitializeSampleTimes(SimStruct *S)
 {
-    ssSetSampleTime(S, 0, CONTINUOUS_SAMPLE_TIME);
+
+	/* According to 9-2 LE 4kHz SV streaming*/
+    ssSetSampleTime(S, 0, SV_LE_SAMPLE_TIME);
     ssSetOffsetTime(S, 0, 0.0);
 
 }
@@ -184,6 +199,14 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     sprintf(text_output, "%f\n",(float) u[0]);
     fprintf (fp, "%s", text_output);
 //    fprintf (fp, "%s", interface);
+
+    /* SV publisher execution */
+    SV_ASDU_setFLOAT(asdu1, float1, (float) u[0]);
+
+    SV_ASDU_increaseSmpCnt(asdu1);
+
+    SampledValuesPublisher_publish(svPublisher);
+
 }
 
 
@@ -228,6 +251,9 @@ static void mdlTerminate(SimStruct *S)
 {
     
     fclose(fp);
+
+    /* SV publisher clean-up */
+    SampledValuesPublisher_destroy(svPublisher);
     
 }
 
