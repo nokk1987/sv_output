@@ -22,9 +22,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "simstruc.h"
-//#include "sv_publisher.h"
+#include "sv_publisher.h"
 
 FILE *fp;
+char interface[TEXT_SIZE];
 
 
 /* Error handling
@@ -61,6 +62,8 @@ FILE *fp;
  */
 static void mdlInitializeSizes(SimStruct *S)
 {
+	size_t nu;
+
     ssSetNumSFcnParams(S, 1);  /* Number of expected parameters */
     if (ssGetNumSFcnParams(S) != ssGetSFcnParamsCount(S)) {
         /* Return if number of expected != number of actual parameters */
@@ -101,6 +104,11 @@ static void mdlInitializeSizes(SimStruct *S)
     if ((fp=fopen("sv_output.txt", "w")) == NULL) {
         /* Error handling stub */
     }
+
+    nu = mxGetNumberOfElements(ssGetSFcnParam(S, 0));
+    mxGetString(ssGetSFcnParam(S, 0), interface, nu+1);
+
+    SampledValuesPublisher svPublisher = SampledValuesPublisher_create(NULL, interface);
 
 }   
 
@@ -167,15 +175,15 @@ static void mdlOutputs(SimStruct *S, int_T tid)
     const real_T *u = (const real_T *) ssGetInputPortSignal(S,0);
     int_T width = ssGetInputPortWidth(S,0);
     char text_output[TEXT_SIZE];
-    char interface[TEXT_SIZE];
+//    char interface[TEXT_SIZE];
 
 //    char *text_stub = "Ponyo!!";
-    nu = mxGetNumberOfElements(ssGetSFcnParam(S, 0));
-    mxGetString(ssGetSFcnParam(S, 0), interface, nu+1);
+//    nu = mxGetNumberOfElements(ssGetSFcnParam(S, 0));
+//    mxGetString(ssGetSFcnParam(S, 0), interface, nu+1);
     
     sprintf(text_output, "%f\n",(float) u[0]);
     fprintf (fp, "%s", text_output);
-    fprintf (fp, "%s", interface);
+//    fprintf (fp, "%s", interface);
 }
 
 
